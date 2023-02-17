@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UserModel {
 
-	@NotEmpty()
 	@Size(min = 4, message = "Name must be minimum of 4 characters")
 	private String name;
 
@@ -26,7 +25,6 @@ public class UserModel {
 	@NotEmpty(message = "Email is invalid")
 	private String email;
 
-	@NotEmpty
 	@Size(min = 8, max = 16, message = "Provide length between 8 and 16")
 	private String password;
 

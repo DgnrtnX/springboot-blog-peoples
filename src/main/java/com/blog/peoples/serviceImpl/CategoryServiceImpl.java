@@ -36,36 +36,27 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryModel updateCategory(CategoryModel categoryModel, Long categoryId) throws DataNotFoundException {
 		log.info("inside updateCategory");
-		UserCategory category = categoryRepo.findByCategoryId(categoryId);
+		UserCategory category = categoryRepo.findById(categoryId)
+				.orElseThrow(() -> new DataNotFoundException("Category id: " + categoryId + " not found"));
 
-		if (category != null) {
-			log.info("Category id found: {}", categoryId);
+		log.info("Category id found: {}", categoryId);
 
-			category = mapCategoryModelToCategory(categoryModel, categoryId);
+		category = mapCategoryModelToCategory(categoryModel, categoryId);
 
-			categoryRepo.save(category);
-			log.info("Category id updated: {}", categoryId);
+		categoryRepo.save(category);
+		log.info("Category id updated: {}", categoryId);
 
-			return mapCategoryToCategoryModel(category);
-
-		} else {
-			throw new DataNotFoundException("Category id: " + categoryId + " not found");
-		}
-
+		return mapCategoryToCategoryModel(category);
 	}
 
 	@Override
 	public CategoryModel getCategory(Long categoryId) throws DataNotFoundException {
 		log.info("inside getCategory");
-		UserCategory category = categoryRepo.findByCategoryId(categoryId);
+		UserCategory category = categoryRepo.findById(categoryId)
+				.orElseThrow(() -> new DataNotFoundException("Category id: " + categoryId + " not found"));
 
-		if (category != null) {
-			log.info("Category id found: {}", categoryId);
-			return mapCategoryToCategoryModel(category);
-
-		} else {
-			throw new DataNotFoundException("Category id: " + categoryId + " not found");
-		}
+		log.info("Category id found: {}", categoryId);
+		return mapCategoryToCategoryModel(category);
 	}
 
 	@Override
@@ -79,17 +70,13 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public String deleteCategory(Long categoryId) throws DataNotFoundException {
 		log.info("inside deleteCategory");
-		UserCategory category = categoryRepo.findByCategoryId(categoryId);
+		UserCategory category = categoryRepo.findById(categoryId)
+				.orElseThrow(() -> new DataNotFoundException("Category id: " + categoryId + " not found"));
 
-		if (category != null) {
-			log.info("Category id found: {}", categoryId);
-			categoryRepo.delete(category);
+		log.info("Category id found: {}", categoryId);
+		categoryRepo.delete(category);
 
-			return "Data deleted for category id: " + categoryId;
-
-		} else {
-			throw new DataNotFoundException("Category id: " + categoryId + " not found");
-		}
+		return "Data deleted for category id: " + categoryId;
 	}
 
 	/***************************************************************************************************/

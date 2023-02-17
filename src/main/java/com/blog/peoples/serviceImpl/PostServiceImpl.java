@@ -81,8 +81,8 @@ public class PostServiceImpl implements PostService {
 	public PostModel getPostById(Long postId) throws DataNotFoundException {
 		UserPost post = postRepo.findById(postId)
 				.orElseThrow(() -> new DataNotFoundException("Post Id not found: " + postId));
-				
-			return mapPostToPostModel(post);
+
+		return mapPostToPostModel(post);
 
 	}
 
@@ -95,24 +95,22 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostModel> getPostByCategory(Long categoryId) throws DataNotFoundException {
-		UserCategory category = categoryRepo.findByCategoryId(categoryId);
-		if (category != null) {
-			List<UserPost> post = postRepo.findByCategory(category);
+		UserCategory category = categoryRepo.findById(categoryId)
+				.orElseThrow(() -> new DataNotFoundException("Post fetch fail.No Category found: " + categoryId));
 
-			return post.stream().map(this::mapPostToPostModel).toList();
-		} else
-			throw new DataNotFoundException("Post fetch fail.No Category found: " + categoryId);
+		List<UserPost> post = postRepo.findByCategory(category);
+
+		return post.stream().map(this::mapPostToPostModel).toList();
 	}
 
 	@Override
 	public List<PostModel> getpostByUser(Long userId) throws DataNotFoundException {
-		PeoplesUser user = userRepo.findByUserId(userId);
-		if (user != null) {
-			List<UserPost> post = postRepo.findByUser(user);
+		PeoplesUser user = userRepo.findById(userId)
+				.orElseThrow(() -> new DataNotFoundException("Post fetch fail.No Category found: " + userId));
 
-			return post.stream().map(this::mapPostToPostModel).toList();
-		} else
-			throw new DataNotFoundException("Post fetch fail.No Category found: " + userId);
+		List<UserPost> post = postRepo.findByUser(user);
+
+		return post.stream().map(this::mapPostToPostModel).toList();
 	}
 
 	/********************************************************************************************************/

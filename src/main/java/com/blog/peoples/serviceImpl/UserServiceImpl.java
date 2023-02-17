@@ -32,37 +32,28 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserModel updateUser(UserModel userRequestModel, Long userId)
-			throws DataNotFoundException {
+	public UserModel updateUser(UserModel userRequestModel, Long userId) throws DataNotFoundException {
 		log.info("inside updateUser");
 
-		PeoplesUser user = userRepo.findByUserId(userId);
+		PeoplesUser user = userRepo.findById(userId)
+				.orElseThrow(() -> new DataNotFoundException("Updation failed, user id: " + userId + " not present"));
 
-		if (user != null) {
-			user = mapUserModeltoUserEntity(userRequestModel, userId);
-			userRepo.save(user);
+		user = mapUserModeltoUserEntity(userRequestModel, userId);
+		userRepo.save(user);
 
-			log.info("user id: " + userId + " updated successfully");
-			return mapUserEntitytoUserModel(user);
-
-		} else {
-			throw new DataNotFoundException("Updation failed, user id: " + userId + " not present");
-		}
+		log.info("user id: " + userId + " updated successfully");
+		return mapUserEntitytoUserModel(user);
 	}
 
 	@Override
 	public UserModel getByUserId(Long userId) throws DataNotFoundException {
 		log.info("inside getByUserId");
 
-		PeoplesUser user = userRepo.findByUserId(userId);
+		PeoplesUser user = userRepo.findById(userId)
+				.orElseThrow(() -> new DataNotFoundException("Requested User id: " + userId + " not present"));
 
-		if (user != null) {
-			log.info("User found for id: " + userId);
-			return mapUserEntitytoUserModel(user);
-
-		} else {
-			throw new DataNotFoundException("Requested User id: " + userId + " not present");
-		}
+		log.info("User found for id: " + userId);
+		return mapUserEntitytoUserModel(user);
 	}
 
 	@Override
@@ -78,24 +69,20 @@ public class UserServiceImpl implements UserService {
 	public String deleteUser(Long userId) throws DataNotFoundException {
 		log.info("inside deleteUser");
 
-		PeoplesUser user = userRepo.findByUserId(userId);
+		PeoplesUser user = userRepo.findById(userId)
+				.orElseThrow(() -> new DataNotFoundException("Requested User id: " + userId + " not present"));
 
-		if (user != null) {
-			log.info("User found for id: " + userId);
-			userRepo.deleteById(userId);
-			return "User with id: " + userId + " is deleted";
+		log.info("User found for id: " + userId);
+		userRepo.delete(user);
 
-		} else {
-			throw new DataNotFoundException("Requested User id: " + userId + " not present");
-		}
-
+		return "User with id: " + userId + " is deleted";
 	}
 
 	/********************************************************************************************************************/
 
 	protected UserModel mapUserEntitytoUserModel(PeoplesUser user) {
-		return new UserModel().setName(user.getName()).setEmail(user.getEmail())
-				.setPassword(user.getPassword()).setAbout(user.getAbout());
+		return new UserModel().setName(user.getName()).setEmail(user.getEmail()).setPassword(user.getPassword())
+				.setAbout(user.getAbout());
 	}
 
 	protected PeoplesUser mapUserModeltoUserEntity(UserModel userRequestModel) {
